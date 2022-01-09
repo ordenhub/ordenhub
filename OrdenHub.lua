@@ -94,7 +94,7 @@ local function ZBYZ_fake_script() -- Load.LocalScript
 		end
 	end
 	
-	if game.PlaceId == 2414851778 then
+	if game.PlaceId == 2606294912 then
 		script.Parent.Parent.TextLabel.Text = "Dungeon Quest"
 		wait(2)
 		script.Parent.Parent.Parent:Destroy()
