@@ -98,7 +98,7 @@ local function ZBYZ_fake_script() -- Load.LocalScript
 		script.Parent.Parent.TextLabel.Text = "Jailbreak"
 		wait(2)
 		script.Parent.Parent.Parent:Destroy()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/artas01/artas01/main/pass"))()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/ordenhub/ordenhub/main/pass.lua"))()
 		game.CoreGui.OrdenHub:Destroy()
 	elseif game.PlaceId == 292439477 then
 		script.Parent.Parent.TextLabel.Text = "Phantom Forces"
