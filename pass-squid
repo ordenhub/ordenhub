@@ -122,9 +122,9 @@ local function VXLO_fake_script() -- check.LocalScript
 	local key = script.Parent.Parent.key
 	
 	script.Parent.MouseButton1Click:Connect(function()
-		if key.Text == "Key" then -- Make the "Key" whatever you wish.
+		if key.Text == "fisd04kfspfdr" then -- Make the "Key" whatever you wish.
 			script.Parent.Parent:TweenPosition(UDim2.new(0.383,0,-0.9,0), "Out", "Quad", 1, true)
-			loadstring(game:HttpGet('https://raw.githubusercontent.com/1201for/V.G-Hub/main/V.Ghub'))()
+			loadstring(game:HttpGet("https://pastebin.com/raw/wAAks929"))()
 			wait(5)
 			script.Parent.Parent:Destroy() -- Destroys the GUI after a set time
 			print("Destroyed!")
