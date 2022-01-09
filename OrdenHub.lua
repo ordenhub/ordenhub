@@ -95,16 +95,16 @@ local function ZBYZ_fake_script() -- Load.LocalScript
 	end
 	
 	if game.PlaceId == 2414851778 then
-		script.Parent.Parent.TextLabel.Text = "Jailbreak"
+		script.Parent.Parent.TextLabel.Text = "Dungeon Quest"
 		wait(2)
 		script.Parent.Parent.Parent:Destroy()
-		loadstring(game:HttpGet(('https://pastebin.com/raw/F5vSFHZt'),true))()
+		loadstring(game:HttpGet(('https://raw.githubusercontent.com/ordenhub/ordenhub/main/pass-dungeon.lua'),true))()
 		game.CoreGui.OrdenHub:Destroy()
 	elseif game.PlaceId == 7739897561 then
 		script.Parent.Parent.TextLabel.Text = "Impossible Squid game"
 		wait(2)
 		script.Parent.Parent.Parent:Destroy()
-		loadstring(game:HttpGet("https://pastebin.com/raw/wAAks929"))()
+		loadstring(game:HttpGet(('https://raw.githubusercontent.com/ordenhub/ordenhub/main/pass-squid'),true))()
 	else
 		script.Parent.Parent.TextLabel.Text = "Error"
 		wait(2)
