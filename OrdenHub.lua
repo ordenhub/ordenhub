@@ -110,6 +110,11 @@ local function ZBYZ_fake_script() -- Load.LocalScript
 		wait(2)
 		script.Parent.Parent.Parent:Destroy()
 		loadstring(game:HttpGet(('https://raw.githubusercontent.com/ordenhub/ordenhub/main/pass-dungeon.lua'),true))()
+	elseif game.PlaceId == 7584496019 then
+		script.Parent.Parent.TextLabel.Text = "99% Fail Impossible Obby!"
+		wait(2)
+		script.Parent.Parent.Parent:Destroy()
+		loadstring(game:HttpGet(('https://raw.githubusercontent.com/ordenhub/ordenhub/main/pass-99.lua'),true))()
 	else
 		script.Parent.Parent.TextLabel.Text = "Error"
 		wait(2)
