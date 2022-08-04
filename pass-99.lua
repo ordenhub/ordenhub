@@ -122,7 +122,7 @@ local function VXLO_fake_script() -- check.LocalScript
 	local key = script.Parent.Parent.key
 	
 	script.Parent.MouseButton1Click:Connect(function()
-		if key.Text == "fisd04kfspfdr" then -- Make the "Key" whatever you wish.
+		if key.Text == "ilovemycat" then -- Make the "Key" whatever you wish.
 			script.Parent.Parent:TweenPosition(UDim2.new(0.383,0,-0.9,0), "Out", "Quad", 1, true)
 			loadstring(game:HttpGet("https://raw.githubusercontent.com/artas01/artas01/main/btools_imnotscriptdeveloper"))()
 			wait(5)
@@ -156,7 +156,7 @@ coroutine.wrap(XNEII_fake_script)()
 local function KWHXAH_fake_script() -- getkey.LocalScript 
 	local script = Instance.new('LocalScript', getkey)
 
-	setclipboard("https://best-downloader.site/er/getkey.html")
+	setclipboard("https://pastebin.com/raw/0Fzwpw4C")
 end
 coroutine.wrap(KWHXAH_fake_script)()
 local function EYNJQ_fake_script() -- closer.LocalScript 
