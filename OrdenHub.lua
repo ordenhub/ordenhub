@@ -2,7 +2,6 @@ local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
 
 local localPlayer = Players.LocalPlayer
 
@@ -11848,14 +11847,14 @@ local colors = {
     warning = Color3.fromRGB(255, 100, 80),
 }
 
--- Toggle button (modern floating pill)
+-- Toggle button (static, no floating animation)
 local toggleButton = Instance.new("TextButton")
 toggleButton.Name = "ToggleHubButton"
-toggleButton.Size = UDim2.new(0, 150, 0, 38)
+toggleButton.Size = UDim2.new(0, 160, 0, 42)
 toggleButton.AnchorPoint = Vector2.new(0.5, 0)
-toggleButton.Position = UDim2.new(0.1, 0, 0, 10)
+toggleButton.Position = UDim2.new(0.1, 0, 0, 12)
 toggleButton.BackgroundColor3 = colors.surface
-toggleButton.BackgroundTransparency = 0.1
+toggleButton.BackgroundTransparency = 0.05
 toggleButton.BorderSizePixel = 0
 toggleButton.Text = "⚡ ROBScript Hub"
 toggleButton.TextColor3 = colors.textPrimary
@@ -11869,9 +11868,40 @@ toggleCorner.Parent = toggleButton
 
 local toggleStroke = Instance.new("UIStroke")
 toggleStroke.Color = colors.accent
-toggleStroke.Thickness = 1
-toggleStroke.Transparency = 0.7
+toggleStroke.Thickness = 1.5
+toggleStroke.Transparency = 0.5
 toggleStroke.Parent = toggleButton
+
+-- Hover animation for toggle button (glow effect)
+local toggleGlow = Instance.new("UIGradient")
+toggleGlow.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, colors.accent),
+    ColorSequenceKeypoint.new(1, colors.accentGlow)
+})
+toggleGlow.Visible = false
+toggleGlow.Parent = toggleStroke
+
+toggleButton.MouseEnter:Connect(function()
+    TweenService:Create(toggleButton, TweenInfo.new(0.2), {
+        BackgroundTransparency = 0,
+        BackgroundColor3 = colors.surfaceHover
+    }):Play()
+    TweenService:Create(toggleStroke, TweenInfo.new(0.2), {
+        Transparency = 0,
+        Thickness = 2
+    }):Play()
+end)
+
+toggleButton.MouseLeave:Connect(function()
+    TweenService:Create(toggleButton, TweenInfo.new(0.2), {
+        BackgroundTransparency = 0.05,
+        BackgroundColor3 = colors.surface
+    }):Play()
+    TweenService:Create(toggleStroke, TweenInfo.new(0.2), {
+        Transparency = 0.5,
+        Thickness = 1.5
+    }):Play()
+end)
 
 -- Main window with glassmorphism effect
 local mainFrame = Instance.new("Frame")
@@ -11892,18 +11922,13 @@ local uiCornerMain = Instance.new("UICorner")
 uiCornerMain.CornerRadius = UDim.new(0, 16)
 uiCornerMain.Parent = mainFrame
 
--- Glass blur effect (if supported)
-local blurEffect = Instance.new("BlurEffect")
-blurEffect.Size = 12
-blurEffect.Enabled = true
-
 local mainStroke = Instance.new("UIStroke")
 mainStroke.Color = colors.border
 mainStroke.Thickness = 1
 mainStroke.Transparency = 0.5
 mainStroke.Parent = mainFrame
 
--- Title bar with gradient
+-- Title bar
 local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
 titleBar.Size = UDim2.new(1, 0, 0, 48)
@@ -11916,11 +11941,6 @@ local titleCorner = Instance.new("UICorner")
 titleCorner.CornerRadius = UDim.new(0, 16)
 titleCorner.Parent = titleBar
 
--- Fix top corners only
-local topLeftFix = Instance.new("UICorner")
-topLeftFix.CornerRadius = UDim.new(0, 16)
-topLeftFix.Parent = titleBar
-
 local titleText = Instance.new("TextLabel")
 titleText.Size = UDim2.new(1, 0, 1, 0)
 titleText.BackgroundTransparency = 1
@@ -11932,7 +11952,7 @@ titleText.TextXAlignment = Enum.TextXAlignment.Left
 titleText.Position = UDim2.new(0, 16, 0, 0)
 titleText.Parent = titleBar
 
--- Close button with hover animation
+-- Close button
 local closeButton = Instance.new("TextButton")
 closeButton.Name = "CloseButton"
 closeButton.AnchorPoint = Vector2.new(1, 0.5)
@@ -12036,7 +12056,6 @@ leftStroke.Thickness = 1
 leftStroke.Transparency = 0.6
 leftStroke.Parent = leftFrame
 
--- Panel title
 local leftTitle = Instance.new("TextLabel")
 leftTitle.Size = UDim2.new(1, 0, 0, 32)
 leftTitle.Position = UDim2.new(0, 12, 0, 8)
@@ -12048,7 +12067,6 @@ leftTitle.TextSize = 13
 leftTitle.TextXAlignment = Enum.TextXAlignment.Left
 leftTitle.Parent = leftFrame
 
--- Search box for games
 local gameSearchBox = Instance.new("TextBox")
 gameSearchBox.Name = "GameSearchBox"
 gameSearchBox.Size = UDim2.new(1, -24, 0, 34)
@@ -12069,7 +12087,6 @@ local searchCorner = Instance.new("UICorner")
 searchCorner.CornerRadius = UDim.new(0, 8)
 searchCorner.Parent = gameSearchBox
 
--- Game list
 local gameList = Instance.new("ScrollingFrame")
 gameList.Name = "GameList"
 gameList.Size = UDim2.new(1, -24, 1, -94)
@@ -12127,7 +12144,6 @@ rightTitle.TextSize = 13
 rightTitle.TextXAlignment = Enum.TextXAlignment.Left
 rightTitle.Parent = rightFrame
 
--- Script search box
 local scriptSearchBox = Instance.new("TextBox")
 scriptSearchBox.Name = "ScriptSearchBox"
 scriptSearchBox.Size = UDim2.new(1, -24, 0, 34)
@@ -12148,7 +12164,6 @@ local scriptSearchCorner = Instance.new("UICorner")
 scriptSearchCorner.CornerRadius = UDim.new(0, 8)
 scriptSearchCorner.Parent = scriptSearchBox
 
--- Script list
 local scriptList = Instance.new("ScrollingFrame")
 scriptList.Name = "ScriptList"
 scriptList.Size = UDim2.new(1, -24, 1, -94)
@@ -12183,7 +12198,6 @@ local currentPage = nil
 local currentPagesView = {}
 local currentScriptsView = {}
 
--- Modern button creation with glow effect
 local function createGlowButton(parent, text, color)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -12, 0, 36)
@@ -12211,13 +12225,11 @@ local function createGlowButton(parent, text, color)
     stroke.Transparency = 0.8
     stroke.Parent = btn
     
-    -- Hover animation
     btn.MouseEnter:Connect(function()
         TweenService:Create(btn, TweenInfo.new(0.15), {
             BackgroundTransparency = 0.1,
             BackgroundColor3 = colors.surfaceHover
         }):Play()
-        
         TweenService:Create(stroke, TweenInfo.new(0.15), {Transparency = 0.3}):Play()
     end)
     
@@ -12226,7 +12238,6 @@ local function createGlowButton(parent, text, color)
             BackgroundTransparency = 0.3,
             BackgroundColor3 = color or colors.surface
         }):Play()
-        
         TweenService:Create(stroke, TweenInfo.new(0.15), {Transparency = 0.8}):Play()
     end)
     
@@ -12248,7 +12259,6 @@ local function createScriptButtonsForPage(page, query)
         
         local btn = createGlowButton(scriptList, keyIcon .. "  " .. (scr.title or "Untitled"), colors.surface)
         
-        -- Add key indicator badge
         local badge = Instance.new("TextLabel")
         badge.Size = UDim2.new(0, scr.has_key and 45 or 40, 1, -4)
         badge.Position = UDim2.new(1, -50, 0, 2)
@@ -12258,7 +12268,6 @@ local function createScriptButtonsForPage(page, query)
         badge.TextColor3 = colors.textPrimary
         badge.Font = Enum.Font.GothamBold
         badge.TextSize = 10
-        badge.TextScaled = false
         badge.Parent = btn
         
         local badgeCorner = Instance.new("UICorner")
@@ -12266,7 +12275,6 @@ local function createScriptButtonsForPage(page, query)
         badgeCorner.Parent = badge
         
         btn.MouseButton1Click:Connect(function()
-            -- Click animation
             TweenService:Create(btn, TweenInfo.new(0.05), {BackgroundTransparency = 0}):Play()
             task.wait(0.05)
             TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.3}):Play()
@@ -12280,7 +12288,6 @@ local function createGameButton(page)
     local btn = createGlowButton(gameList, "🎮  " .. title, colors.surface)
     
     btn.MouseButton1Click:Connect(function()
-        -- Reset all game buttons
         for _, child in ipairs(gameList:GetChildren()) do
             if child:IsA("TextButton") then
                 TweenService:Create(child, TweenInfo.new(0.15), {BackgroundTransparency = 0.3}):Play()
@@ -12291,7 +12298,6 @@ local function createGameButton(page)
             end
         end
         
-        -- Highlight selected
         TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundTransparency = 0, BackgroundColor3 = colors.accent}):Play()
         local stroke = btn:FindFirstChildWhichIsA("UIStroke")
         if stroke then
@@ -12367,22 +12373,6 @@ toggleButton.MouseButton1Click:Connect(function()
         hideMain()
     else
         showMain()
-    end
-end)
-
--- Floating animation for toggle button
-task.spawn(function()
-    local floatPos = toggleButton.Position.Y.Offset
-    local direction = 1
-    while toggleButton and toggleButton.Parent do
-        task.wait(2)
-        TweenService:Create(toggleButton, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-            Position = UDim2.new(0.1, 0, 0, floatPos + (direction * 3))
-        }):Play()
-        floatPos = floatPos + (direction * 3)
-        if math.abs(floatPos - toggleButton.Position.Y.Offset) < 1 then
-            direction = direction * -1
-        end
     end
 end)
 
