@@ -124,7 +124,8 @@ end
 ---------------------------------------------------------------------
 -- LOAD HUB DATA (embedded, no HTTP)
 ---------------------------------------------------------------------
-local allPages = local allPages = {
+
+local allPages = {
     {
         page_url = "https://robscript.com/anime-clash-scripts/",
         slug = "anime-clash-scripts",
@@ -11820,166 +11821,109 @@ local allPages = local allPages = {
     },
 }
 
-
 if #allPages == 0 then
     warn("[ROBScript Hub] No pages embedded; UI will still show but be empty.")
 end
 
 local guiParent = (gethui and gethui()) or game:FindFirstChildOfClass("CoreGui") or localPlayer:WaitForChild("PlayerGui")
 
+---------------------------------------------------------------------
+-- VISUAL THEME
+---------------------------------------------------------------------
+
 local THEME = {
-    bg = Color3.fromRGB(9, 11, 18),
-    panel = Color3.fromRGB(16, 20, 31),
-    panelAlt = Color3.fromRGB(22, 27, 41),
-    panelSoft = Color3.fromRGB(27, 34, 52),
-    card = Color3.fromRGB(33, 41, 61),
-    cardHover = Color3.fromRGB(44, 55, 82),
-    cardActive = Color3.fromRGB(69, 96, 176),
-    accent = Color3.fromRGB(101, 133, 255),
-    accentSoft = Color3.fromRGB(132, 92, 255),
-    success = Color3.fromRGB(93, 211, 158),
-    danger = Color3.fromRGB(255, 108, 118),
-    text = Color3.fromRGB(245, 247, 255),
-    textDim = Color3.fromRGB(165, 174, 204),
-    stroke = Color3.fromRGB(68, 80, 112),
-    strokeSoft = Color3.fromRGB(44, 53, 77),
+    Bg = Color3.fromRGB(10, 12, 18),
+    Surface = Color3.fromRGB(18, 22, 30),
+    Surface2 = Color3.fromRGB(24, 29, 39),
+    Surface3 = Color3.fromRGB(31, 37, 49),
+    Stroke = Color3.fromRGB(60, 72, 92),
+
+    Text = Color3.fromRGB(245, 247, 255),
+    TextDim = Color3.fromRGB(155, 165, 185),
+    Placeholder = Color3.fromRGB(120, 130, 150),
+
+    Accent = Color3.fromRGB(90, 140, 255),
+    AccentDark = Color3.fromRGB(60, 95, 190),
+    Success = Color3.fromRGB(70, 190, 120),
+    Warning = Color3.fromRGB(255, 170, 70),
+    Danger = Color3.fromRGB(255, 95, 95),
 }
 
-local function applyCorner(instance, radius)
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, radius or 10)
-    corner.Parent = instance
-    return corner
+local function addCorner(obj, radius)
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, radius or 8)
+    c.Parent = obj
+    return c
 end
 
-local function applyStroke(instance, color, thickness, transparency)
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = color or THEME.stroke
-    stroke.Thickness = thickness or 1
-    stroke.Transparency = transparency or 0
-    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    stroke.Parent = instance
-    return stroke
+local function addStroke(obj, color, thickness, transparency)
+    local s = Instance.new("UIStroke")
+    s.Color = color or THEME.Stroke
+    s.Thickness = thickness or 1
+    s.Transparency = transparency or 0
+    s.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    s.Parent = obj
+    return s
 end
 
-local function applyVerticalGradient(instance, topColor, bottomColor)
-    local gradient = Instance.new("UIGradient")
-    gradient.Rotation = 90
-    gradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, topColor),
-        ColorSequenceKeypoint.new(1, bottomColor),
-    })
-    gradient.Parent = instance
-    return gradient
+local function addPadding(obj, l, r, t, b)
+    local p = Instance.new("UIPadding")
+    p.PaddingLeft = UDim.new(0, l or 0)
+    p.PaddingRight = UDim.new(0, r or l or 0)
+    p.PaddingTop = UDim.new(0, t or 0)
+    p.PaddingBottom = UDim.new(0, b or t or 0)
+    p.Parent = obj
+    return p
 end
 
-local function makeShadow(parent, zIndex)
-    local shadow = Instance.new("Frame")
-    shadow.Name = "Shadow"
-    shadow.Size = UDim2.new(1, 18, 1, 18)
-    shadow.Position = UDim2.new(0, -9, 0, -9)
-    shadow.BackgroundColor3 = Color3.new(0, 0, 0)
-    shadow.BackgroundTransparency = 0.72
-    shadow.BorderSizePixel = 0
-    shadow.ZIndex = zIndex or 0
-    shadow.Parent = parent
-    applyCorner(shadow, 18)
-    return shadow
-end
-
-local function styleTextInput(box)
-    box.BackgroundColor3 = THEME.panelSoft
-    box.TextColor3 = THEME.text
-    box.PlaceholderColor3 = THEME.textDim
-    box.Font = Enum.Font.Gotham
-    box.TextSize = 14
-    box.ClearTextOnFocus = false
-    box.BorderSizePixel = 0
-    applyCorner(box, 10)
-    applyStroke(box, THEME.strokeSoft, 1, 0.15)
-    applyVerticalGradient(box, Color3.fromRGB(36, 44, 66), Color3.fromRGB(22, 28, 43))
-    box:GetPropertyChangedSignal("Text"):Connect(function()
-        if box.Text == "" then
-            box.TextXAlignment = Enum.TextXAlignment.Left
-        end
-    end)
-    box.Focused:Connect(function()
-        TweenService:Create(box, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = Color3.fromRGB(42, 52, 78)
-        }):Play()
-    end)
-    box.FocusLost:Connect(function()
-        TweenService:Create(box, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = THEME.panelSoft
-        }):Play()
-    end)
-end
-
-local function styleScrollingFrame(frame)
-    frame.BackgroundColor3 = THEME.panel
-    frame.BorderSizePixel = 0
-    frame.ScrollBarThickness = 5
-    frame.ScrollBarImageColor3 = THEME.accent
-    frame.CanvasSize = UDim2.new(0, 0, 0, 0)
-    applyCorner(frame, 12)
-    applyStroke(frame, THEME.strokeSoft, 1, 0.2)
-    applyVerticalGradient(frame, Color3.fromRGB(18, 23, 36), Color3.fromRGB(11, 15, 25))
-end
-
-local function attachButtonFx(button, colors, scaleTarget)
-    local normal = colors.normal
-    local hover = colors.hover or normal
-    local active = colors.active or hover
-    local textNormal = colors.text or THEME.text
-    local textHover = colors.textHover or textNormal
-    local clickScale = scaleTarget or 0.985
-
-    local buttonScale = Instance.new("UIScale")
-    buttonScale.Scale = 1
-    buttonScale.Parent = button
-
-    button.BackgroundColor3 = normal
-    button.TextColor3 = textNormal
+local function addHover(button, normalColor, hoverColor, pressedColor)
+    local info = TweenInfo.new(0.14, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
     button.MouseEnter:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.14, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = hover,
-            TextColor3 = textHover
-        }):Play()
-        TweenService:Create(buttonScale, TweenInfo.new(0.14, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Scale = 1.01
+        TweenService:Create(button, info, {
+            BackgroundColor3 = hoverColor or normalColor
         }):Play()
     end)
 
     button.MouseLeave:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.14, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = normal,
-            TextColor3 = textNormal
-        }):Play()
-        TweenService:Create(buttonScale, TweenInfo.new(0.14, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Scale = 1
+        TweenService:Create(button, info, {
+            BackgroundColor3 = normalColor
         }):Play()
     end)
 
     button.MouseButton1Down:Connect(function()
-        TweenService:Create(buttonScale, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Scale = clickScale
-        }):Play()
-        TweenService:Create(button, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = active
+        TweenService:Create(button, info, {
+            BackgroundColor3 = pressedColor or hoverColor or normalColor
         }):Play()
     end)
 
     button.MouseButton1Up:Connect(function()
-        local targetColor = hover
-        if not button:IsDescendantOf(game) then
-            return
-        end
-        TweenService:Create(buttonScale, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Scale = 1.01
+        TweenService:Create(button, info, {
+            BackgroundColor3 = hoverColor or normalColor
         }):Play()
-        TweenService:Create(button, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = targetColor
+    end)
+end
+
+local function styleSearchBox(box)
+    box.BackgroundColor3 = THEME.Surface3
+    box.TextColor3 = THEME.Text
+    box.PlaceholderColor3 = THEME.Placeholder
+    box.Font = Enum.Font.Gotham
+    box.TextSize = 14
+    box.ClearTextOnFocus = false
+    addCorner(box, 10)
+    addStroke(box, THEME.Stroke, 1, 0.15)
+    addPadding(box, 12, 12, 0, 0)
+
+    box.Focused:Connect(function()
+        TweenService:Create(box, TweenInfo.new(0.15), {
+            BackgroundColor3 = Color3.fromRGB(36, 43, 57)
+        }):Play()
+    end)
+
+    box.FocusLost:Connect(function()
+        TweenService:Create(box, TweenInfo.new(0.15), {
+            BackgroundColor3 = THEME.Surface3
         }):Play()
     end)
 end
@@ -11987,245 +11931,91 @@ end
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "ROBScriptHub"
 screenGui.ResetOnSpawn = false
-screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.Parent = guiParent
 
-local ambientGlow = Instance.new("Frame")
-ambientGlow.Name = "AmbientGlow"
-ambientGlow.AnchorPoint = Vector2.new(0.5, 0.5)
-ambientGlow.Position = UDim2.new(0.5, 0, 0.48, 0)
-ambientGlow.Size = UDim2.new(0, 760, 0, 460)
-ambientGlow.BackgroundColor3 = THEME.accentSoft
-ambientGlow.BackgroundTransparency = 0.9
-ambientGlow.BorderSizePixel = 0
-ambientGlow.ZIndex = 0
-ambientGlow.Parent = screenGui
-applyCorner(ambientGlow, 28)
-applyVerticalGradient(ambientGlow, THEME.accentSoft, THEME.accent)
-
+-- Кнопка Toggle
 local toggleButton = Instance.new("TextButton")
 toggleButton.Name = "ToggleHubButton"
-toggleButton.Size = UDim2.new(0, 150, 0, 34)
-toggleButton.AnchorPoint = Vector2.new(0, 0)
-toggleButton.Position = UDim2.new(0, 18, 0, 16)
-toggleButton.BackgroundColor3 = THEME.panelAlt
+toggleButton.Size = UDim2.new(0, 152, 0, 34)
+toggleButton.AnchorPoint = Vector2.new(0.5, 0)
+toggleButton.Position = UDim2.new(0.1, 0, 0, 6)
+toggleButton.BackgroundColor3 = THEME.Surface2
 toggleButton.BorderSizePixel = 0
 toggleButton.Text = "Toggle Hub"
-toggleButton.TextColor3 = THEME.text
-toggleButton.Font = Enum.Font.GothamSemibold
+toggleButton.TextColor3 = THEME.Text
+toggleButton.Font = Enum.Font.GothamBold
 toggleButton.TextSize = 14
 toggleButton.AutoButtonColor = false
 toggleButton.Parent = screenGui
-applyCorner(toggleButton, 11)
-applyStroke(toggleButton, THEME.stroke, 1, 0.1)
-applyVerticalGradient(toggleButton, Color3.fromRGB(41, 50, 76), Color3.fromRGB(24, 30, 46))
-attachButtonFx(toggleButton, {
-    normal = Color3.fromRGB(29, 36, 54),
-    hover = Color3.fromRGB(39, 48, 73),
-    active = Color3.fromRGB(58, 73, 112),
-})
 
-local mainShadow = Instance.new("Frame")
-mainShadow.Name = "MainShadow"
-mainShadow.Size = UDim2.new(0, 748, 0, 458)
-mainShadow.AnchorPoint = Vector2.new(0.5, 0.5)
-mainShadow.Position = UDim2.new(0.5, 0, 0.5, 10)
-mainShadow.BackgroundColor3 = Color3.new(0, 0, 0)
-mainShadow.BackgroundTransparency = 0.55
-mainShadow.BorderSizePixel = 0
-mainShadow.ZIndex = 0
-mainShadow.Parent = screenGui
-applyCorner(mainShadow, 22)
+addCorner(toggleButton, 10)
+addStroke(toggleButton, THEME.Stroke, 1, 0.1)
+addHover(toggleButton, THEME.Surface2, THEME.Surface3, Color3.fromRGB(40, 48, 64))
 
+-- Основное окно
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 730, 0, 438)
-mainFrame.Position = UDim2.new(0.5, -365, 0.5, -219)
-mainFrame.BackgroundColor3 = THEME.bg
+mainFrame.Size = UDim2.new(0, 700, 0, 400)
+mainFrame.Position = UDim2.new(0.5, -350, 0.5, -200)
+mainFrame.BackgroundColor3 = THEME.Surface
 mainFrame.BorderSizePixel = 0
+mainFrame.ClipsDescendants = true
 mainFrame.Parent = screenGui
-applyCorner(mainFrame, 18)
-applyStroke(mainFrame, THEME.stroke, 1.2, 0.05)
-applyVerticalGradient(mainFrame, Color3.fromRGB(16, 19, 30), Color3.fromRGB(8, 11, 19))
 
 local uiScale = Instance.new("UIScale")
 uiScale.Scale = 1
 uiScale.Parent = mainFrame
 
-local titleBar = Instance.new("Frame")
+addCorner(mainFrame, 14)
+addStroke(mainFrame, THEME.Stroke, 1, 0.05)
+
+local mainGradient = Instance.new("UIGradient")
+mainGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 24, 34)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(14, 17, 24))
+})
+mainGradient.Rotation = 90
+mainGradient.Parent = mainFrame
+
+local titleBar = Instance.new("TextLabel")
 titleBar.Name = "TitleBar"
-titleBar.Size = UDim2.new(1, -16, 0, 56)
-titleBar.Position = UDim2.new(0, 8, 0, 8)
-titleBar.BackgroundColor3 = THEME.panelAlt
+titleBar.Size = UDim2.new(1, 0, 0, 40)
+titleBar.BackgroundColor3 = THEME.Surface2
 titleBar.BorderSizePixel = 0
+titleBar.Text = "ROBScript Hub"
+titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleBar.Font = Enum.Font.GothamBold
+titleBar.TextSize = 18
 titleBar.Parent = mainFrame
-applyCorner(titleBar, 14)
-applyStroke(titleBar, THEME.strokeSoft, 1, 0.12)
-applyVerticalGradient(titleBar, Color3.fromRGB(34, 41, 62), Color3.fromRGB(22, 28, 43))
 
-local titleText = Instance.new("TextLabel")
-titleText.Name = "TitleText"
-titleText.BackgroundTransparency = 1
-titleText.Position = UDim2.new(0, 16, 0, 6)
-titleText.Size = UDim2.new(1, -100, 0, 24)
-titleText.Text = "ROBScript Hub"
-titleText.TextColor3 = THEME.text
-titleText.TextXAlignment = Enum.TextXAlignment.Left
-titleText.Font = Enum.Font.GothamBold
-titleText.TextSize = 20
-titleText.Parent = titleBar
-
-local subtitleText = Instance.new("TextLabel")
-subtitleText.Name = "SubtitleText"
-subtitleText.BackgroundTransparency = 1
-subtitleText.Position = UDim2.new(0, 16, 0, 29)
-subtitleText.Size = UDim2.new(1, -140, 0, 18)
-subtitleText.Text = "Modern hub browser • clean layout • quick execution"
-subtitleText.TextColor3 = THEME.textDim
-subtitleText.TextXAlignment = Enum.TextXAlignment.Left
-subtitleText.Font = Enum.Font.Gotham
-subtitleText.TextSize = 12
-subtitleText.Parent = titleBar
+addCorner(titleBar, 14)
+local titleGradient = Instance.new("UIGradient")
+titleGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(32, 38, 52)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 24, 34))
+})
+titleGradient.Rotation = 90
+titleGradient.Parent = titleBar
+addStroke(titleBar, THEME.Stroke, 1, 0.2)
+addPadding(titleBar, 14, 48, 0, 0)
+titleBar.TextXAlignment = Enum.TextXAlignment.Left
 
 local closeButton = Instance.new("TextButton")
 closeButton.Name = "CloseButton"
 closeButton.AnchorPoint = Vector2.new(1, 0.5)
-closeButton.Size = UDim2.new(0, 34, 0, 34)
-closeButton.Position = UDim2.new(1, -12, 0.5, 0)
-closeButton.BackgroundColor3 = Color3.fromRGB(67, 33, 46)
-closeButton.Text = "×"
-closeButton.TextColor3 = THEME.text
+closeButton.Size = UDim2.new(0, 28, 0, 28)
+closeButton.Position = UDim2.new(1, -8, 0.5, 0)
+closeButton.BackgroundColor3 = Color3.fromRGB(60, 36, 36)
+closeButton.Text = "✕"
+closeButton.TextColor3 = THEME.Text
 closeButton.Font = Enum.Font.GothamBold
-closeButton.TextSize = 20
+closeButton.TextSize = 14
 closeButton.AutoButtonColor = false
 closeButton.Parent = titleBar
-applyCorner(closeButton, 10)
-applyStroke(closeButton, Color3.fromRGB(140, 73, 100), 1, 0.15)
-attachButtonFx(closeButton, {
-    normal = Color3.fromRGB(67, 33, 46),
-    hover = Color3.fromRGB(90, 41, 58),
-    active = Color3.fromRGB(121, 54, 76),
-})
 
-local contentFrame = Instance.new("Frame")
-contentFrame.Name = "ContentFrame"
-contentFrame.Position = UDim2.new(0, 8, 0, 72)
-contentFrame.Size = UDim2.new(1, -16, 1, -80)
-contentFrame.BackgroundTransparency = 1
-contentFrame.Parent = mainFrame
-
-local leftFrame = Instance.new("Frame")
-leftFrame.Name = "GamesFrame"
-leftFrame.Size = UDim2.new(0.4, -6, 1, 0)
-leftFrame.Position = UDim2.new(0, 0, 0, 0)
-leftFrame.BackgroundColor3 = THEME.panelAlt
-leftFrame.BorderSizePixel = 0
-leftFrame.Parent = contentFrame
-applyCorner(leftFrame, 16)
-applyStroke(leftFrame, THEME.strokeSoft, 1, 0.08)
-applyVerticalGradient(leftFrame, Color3.fromRGB(24, 30, 45), Color3.fromRGB(15, 19, 29))
-
-local leftHeader = Instance.new("TextLabel")
-leftHeader.Name = "LeftHeader"
-leftHeader.BackgroundTransparency = 1
-leftHeader.Position = UDim2.new(0, 12, 0, 10)
-leftHeader.Size = UDim2.new(1, -24, 0, 18)
-leftHeader.Text = "Games"
-leftHeader.TextColor3 = THEME.text
-leftHeader.TextXAlignment = Enum.TextXAlignment.Left
-leftHeader.Font = Enum.Font.GothamSemibold
-leftHeader.TextSize = 13
-leftHeader.Parent = leftFrame
-
-local gameSearchBox = Instance.new("TextBox")
-gameSearchBox.Name = "GameSearchBox"
-gameSearchBox.Size = UDim2.new(1, -24, 0, 34)
-gameSearchBox.Position = UDim2.new(0, 12, 0, 34)
-gameSearchBox.PlaceholderText = "Search games..."
-gameSearchBox.Text = ""
-gameSearchBox.Parent = leftFrame
-styleTextInput(gameSearchBox)
-
-local gameList = Instance.new("ScrollingFrame")
-gameList.Name = "GameList"
-gameList.Size = UDim2.new(1, -24, 1, -80)
-gameList.Position = UDim2.new(0, 12, 0, 74)
-gameList.Parent = leftFrame
-styleScrollingFrame(gameList)
-
-local gameListPadding = Instance.new("UIPadding")
-gameListPadding.PaddingTop = UDim.new(0, 8)
-gameListPadding.PaddingBottom = UDim.new(0, 8)
-gameListPadding.PaddingLeft = UDim.new(0, 8)
-gameListPadding.PaddingRight = UDim.new(0, 8)
-gameListPadding.Parent = gameList
-
-local gameListLayout = Instance.new("UIListLayout")
-gameListLayout.Padding = UDim.new(0, 8)
-gameListLayout.FillDirection = Enum.FillDirection.Vertical
-gameListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-gameListLayout.Parent = gameList
-
-gameListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    gameList.CanvasSize = UDim2.new(0, 0, 0, gameListLayout.AbsoluteContentSize.Y + 16)
-end)
-
-local rightFrame = Instance.new("Frame")
-rightFrame.Name = "ScriptsFrame"
-rightFrame.Size = UDim2.new(0.6, -6, 1, 0)
-rightFrame.Position = UDim2.new(0.4, 12, 0, 0)
-rightFrame.BackgroundColor3 = THEME.panelAlt
-rightFrame.BorderSizePixel = 0
-rightFrame.Parent = contentFrame
-applyCorner(rightFrame, 16)
-applyStroke(rightFrame, THEME.strokeSoft, 1, 0.08)
-applyVerticalGradient(rightFrame, Color3.fromRGB(24, 30, 45), Color3.fromRGB(15, 19, 29))
-
-local rightHeader = Instance.new("TextLabel")
-rightHeader.Name = "RightHeader"
-rightHeader.BackgroundTransparency = 1
-rightHeader.Position = UDim2.new(0, 12, 0, 10)
-rightHeader.Size = UDim2.new(1, -24, 0, 18)
-rightHeader.Text = "Scripts"
-rightHeader.TextColor3 = THEME.text
-rightHeader.TextXAlignment = Enum.TextXAlignment.Left
-rightHeader.Font = Enum.Font.GothamSemibold
-rightHeader.TextSize = 13
-rightHeader.Parent = rightFrame
-
-local scriptSearchBox = Instance.new("TextBox")
-scriptSearchBox.Name = "ScriptSearchBox"
-scriptSearchBox.Size = UDim2.new(1, -24, 0, 34)
-scriptSearchBox.Position = UDim2.new(0, 12, 0, 34)
-scriptSearchBox.PlaceholderText = "Search scripts..."
-scriptSearchBox.Text = ""
-scriptSearchBox.Parent = rightFrame
-styleTextInput(scriptSearchBox)
-
-local scriptList = Instance.new("ScrollingFrame")
-scriptList.Name = "ScriptList"
-scriptList.Size = UDim2.new(1, -24, 1, -80)
-scriptList.Position = UDim2.new(0, 12, 0, 74)
-scriptList.Parent = rightFrame
-styleScrollingFrame(scriptList)
-
-local scriptListPadding = Instance.new("UIPadding")
-scriptListPadding.PaddingTop = UDim.new(0, 8)
-scriptListPadding.PaddingBottom = UDim.new(0, 8)
-scriptListPadding.PaddingLeft = UDim.new(0, 8)
-scriptListPadding.PaddingRight = UDim.new(0, 8)
-scriptListPadding.Parent = scriptList
-
-local scriptListLayout = Instance.new("UIListLayout")
-scriptListLayout.Padding = UDim.new(0, 8)
-scriptListLayout.FillDirection = Enum.FillDirection.Vertical
-scriptListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-scriptListLayout.Parent = scriptList
-
-scriptListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    scriptList.CanvasSize = UDim2.new(0, 0, 0, scriptListLayout.AbsoluteContentSize.Y + 16)
-end)
-
+addCorner(closeButton, 8)
+addStroke(closeButton, Color3.fromRGB(120, 70, 70), 1, 0.15)
+addHover(closeButton, Color3.fromRGB(60, 36, 36), Color3.fromRGB(85, 48, 48), Color3.fromRGB(105, 60, 60))
 
 ---------------------------------------------------------------------
 -- DRAGGING MAIN WINDOW (по titleBar)
@@ -12280,8 +12070,8 @@ end
 
 local contentFrame = Instance.new("Frame")
 contentFrame.Name = "ContentFrame"
-contentFrame.Position = UDim2.new(0, 0, 0, 32)
-contentFrame.Size = UDim2.new(1, 0, 1, -32)
+contentFrame.Position = UDim2.new(0, 0, 0, 40)
+contentFrame.Size = UDim2.new(1, 0, 1, -40)
 contentFrame.BackgroundTransparency = 1
 contentFrame.Parent = mainFrame
 
@@ -12290,55 +12080,50 @@ local leftFrame = Instance.new("Frame")
 leftFrame.Name = "GamesFrame"
 leftFrame.Size = UDim2.new(0.4, -8, 1, -16)
 leftFrame.Position = UDim2.new(0, 8, 0, 8)
-leftFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+leftFrame.BackgroundColor3 = THEME.Surface2
 leftFrame.BorderSizePixel = 0
 leftFrame.Parent = contentFrame
-
-local uiCornerLeft = Instance.new("UICorner")
-uiCornerLeft.CornerRadius = UDim.new(0, 8)
-uiCornerLeft.Parent = leftFrame
+addCorner(leftFrame, 12)
+addStroke(leftFrame, THEME.Stroke, 1, 0.2)
 
 local gameSearchBox = Instance.new("TextBox")
 gameSearchBox.Name = "GameSearchBox"
-gameSearchBox.Size = UDim2.new(1, -16, 0, 28)
+gameSearchBox.Size = UDim2.new(1, -16, 0, 32)
 gameSearchBox.Position = UDim2.new(0, 8, 0, 8)
-gameSearchBox.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 gameSearchBox.BorderSizePixel = 0
 gameSearchBox.PlaceholderText = "Search games..."
 gameSearchBox.Text = ""
-gameSearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-gameSearchBox.PlaceholderColor3 = Color3.fromRGB(130, 130, 130)
-gameSearchBox.Font = Enum.Font.Gotham
-gameSearchBox.TextSize = 14
-gameSearchBox.ClearTextOnFocus = false
 gameSearchBox.Parent = leftFrame
-
-local uiCornerGameSearch = Instance.new("UICorner")
-uiCornerGameSearch.CornerRadius = UDim.new(0, 6)
-uiCornerGameSearch.Parent = gameSearchBox
+styleSearchBox(gameSearchBox)
 
 local gameList = Instance.new("ScrollingFrame")
 gameList.Name = "GameList"
-gameList.Size = UDim2.new(1, -16, 1, -52)
-gameList.Position = UDim2.new(0, 8, 0, 44)
-gameList.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+gameList.Size = UDim2.new(1, -16, 1, -56)
+gameList.Position = UDim2.new(0, 8, 0, 48)
+gameList.BackgroundColor3 = THEME.Bg
 gameList.BorderSizePixel = 0
 gameList.CanvasSize = UDim2.new(0, 0, 0, 0)
-gameList.ScrollBarThickness = 4
+gameList.ScrollBarThickness = 3
+gameList.ScrollBarImageColor3 = THEME.Accent
 gameList.Parent = leftFrame
-
-local uiCornerGameList = Instance.new("UICorner")
-uiCornerGameList.CornerRadius = UDim.new(0, 6)
-uiCornerGameList.Parent = gameList
+addCorner(gameList, 10)
+addStroke(gameList, THEME.Stroke, 1, 0.25)
 
 local gameListLayout = Instance.new("UIListLayout")
-gameListLayout.Padding = UDim.new(0, 4)
+gameListLayout.Padding = UDim.new(0, 6)
 gameListLayout.FillDirection = Enum.FillDirection.Vertical
 gameListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 gameListLayout.Parent = gameList
 
+local gameListPadding = Instance.new("UIPadding")
+gameListPadding.PaddingLeft = UDim.new(0, 6)
+gameListPadding.PaddingRight = UDim.new(0, 6)
+gameListPadding.PaddingTop = UDim.new(0, 6)
+gameListPadding.PaddingBottom = UDim.new(0, 6)
+gameListPadding.Parent = gameList
+
 gameListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    gameList.CanvasSize = UDim2.new(0, 0, 0, gameListLayout.AbsoluteContentSize.Y + 8)
+    gameList.CanvasSize = UDim2.new(0, 0, 0, gameListLayout.AbsoluteContentSize.Y + 12)
 end)
 
 -- Правая часть: список скриптов
@@ -12346,55 +12131,63 @@ local rightFrame = Instance.new("Frame")
 rightFrame.Name = "ScriptsFrame"
 rightFrame.Size = UDim2.new(0.6, -16, 1, -16)
 rightFrame.Position = UDim2.new(0.4, 8, 0, 8)
-rightFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+rightFrame.BackgroundColor3 = THEME.Surface2
 rightFrame.BorderSizePixel = 0
 rightFrame.Parent = contentFrame
-
-local uiCornerRight = Instance.new("UICorner")
-uiCornerRight.CornerRadius = UDim.new(0, 8)
-uiCornerRight.Parent = rightFrame
+addCorner(rightFrame, 12)
+addStroke(rightFrame, THEME.Stroke, 1, 0.2)
 
 local scriptSearchBox = Instance.new("TextBox")
 scriptSearchBox.Name = "ScriptSearchBox"
-scriptSearchBox.Size = UDim2.new(1, -16, 0, 28)
+scriptSearchBox.Size = UDim2.new(1, -16, 0, 32)
 scriptSearchBox.Position = UDim2.new(0, 8, 0, 8)
-scriptSearchBox.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 scriptSearchBox.BorderSizePixel = 0
 scriptSearchBox.PlaceholderText = "Search scripts..."
 scriptSearchBox.Text = ""
-scriptSearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-scriptSearchBox.PlaceholderColor3 = Color3.fromRGB(130, 130, 130)
-scriptSearchBox.Font = Enum.Font.Gotham
-scriptSearchBox.TextSize = 14
-scriptSearchBox.ClearTextOnFocus = false
 scriptSearchBox.Parent = rightFrame
-
-local uiCornerScriptSearch = Instance.new("UICorner")
-uiCornerScriptSearch.CornerRadius = UDim.new(0, 6)
-uiCornerScriptSearch.Parent = scriptSearchBox
+styleSearchBox(scriptSearchBox)
 
 local scriptList = Instance.new("ScrollingFrame")
 scriptList.Name = "ScriptList"
-scriptList.Size = UDim2.new(1, -16, 1, -52)
-scriptList.Position = UDim2.new(0, 8, 0, 44)
-scriptList.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+scriptList.Size = UDim2.new(1, -16, 1, -56)
+scriptList.Position = UDim2.new(0, 8, 0, 48)
+scriptList.BackgroundColor3 = THEME.Bg
 scriptList.BorderSizePixel = 0
 scriptList.CanvasSize = UDim2.new(0, 0, 0, 0)
-scriptList.ScrollBarThickness = 4
+scriptList.ScrollBarThickness = 3
+scriptList.ScrollBarImageColor3 = THEME.Accent
 scriptList.Parent = rightFrame
-
-local uiCornerScriptList = Instance.new("UICorner")
-uiCornerScriptList.CornerRadius = UDim.new(0, 6)
-uiCornerScriptList.Parent = scriptList
+addCorner(scriptList, 10)
+addStroke(scriptList, THEME.Stroke, 1, 0.25)
 
 local scriptListLayout = Instance.new("UIListLayout")
-scriptListLayout.Padding = UDim.new(0, 4)
+scriptListLayout.Padding = UDim.new(0, 6)
 scriptListLayout.FillDirection = Enum.FillDirection.Vertical
 scriptListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 scriptListLayout.Parent = scriptList
 
+local scriptListPadding = Instance.new("UIPadding")
+scriptListPadding.PaddingLeft = UDim.new(0, 6)
+scriptListPadding.PaddingRight = UDim.new(0, 6)
+scriptListPadding.PaddingTop = UDim.new(0, 6)
+scriptListPadding.PaddingBottom = UDim.new(0, 6)
+scriptListPadding.Parent = scriptList
+
+local emptyStateLabel = Instance.new("TextLabel")
+emptyStateLabel.Name = "EmptyStateLabel"
+emptyStateLabel.Size = UDim2.new(1, -24, 0, 44)
+emptyStateLabel.Position = UDim2.new(0, 12, 0, 12)
+emptyStateLabel.BackgroundTransparency = 1
+emptyStateLabel.Text = "Select a game to view scripts"
+emptyStateLabel.TextColor3 = THEME.TextDim
+emptyStateLabel.Font = Enum.Font.GothamMedium
+emptyStateLabel.TextSize = 14
+emptyStateLabel.TextWrapped = true
+emptyStateLabel.Visible = false
+emptyStateLabel.Parent = scriptList
+
 scriptListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    scriptList.CanvasSize = UDim2.new(0, 0, 0, scriptListLayout.AbsoluteContentSize.Y + 8)
+    scriptList.CanvasSize = UDim2.new(0, 0, 0, scriptListLayout.AbsoluteContentSize.Y + 12)
 end)
 
 ---------------------------------------------------------------------
@@ -12404,104 +12197,14 @@ end)
 local currentPage = nil
 local currentPagesView = {}
 local currentScriptsView = {}
-local selectedGameButton = nil
-
-local function createBadge(parent, text, isKey)
-    local badge = Instance.new("TextLabel")
-    badge.Name = "Badge"
-    badge.AnchorPoint = Vector2.new(1, 0.5)
-    badge.Position = UDim2.new(1, -10, 0.5, 0)
-    badge.Size = UDim2.new(0, isKey and 56 or 70, 0, 20)
-    badge.BackgroundColor3 = isKey and Color3.fromRGB(58, 48, 92) or Color3.fromRGB(29, 64, 56)
-    badge.BorderSizePixel = 0
-    badge.Text = text
-    badge.TextColor3 = THEME.text
-    badge.Font = Enum.Font.GothamSemibold
-    badge.TextSize = 10
-    badge.Parent = parent
-    applyCorner(badge, 999)
-    applyStroke(badge, isKey and Color3.fromRGB(124, 104, 210) or Color3.fromRGB(87, 166, 137), 1, 0.18)
-end
-
-local function styleListButton(button, normalColor, hoverColor, activeColor)
-    button.AutoButtonColor = false
-    button.BackgroundColor3 = normalColor
-    button.TextColor3 = THEME.text
-    button.Font = Enum.Font.GothamMedium
-    button.TextSize = 14
-    button.TextXAlignment = Enum.TextXAlignment.Left
-    button.TextTruncate = Enum.TextTruncate.AtEnd
-    button.BorderSizePixel = 0
-    applyCorner(button, 12)
-    applyStroke(button, THEME.strokeSoft, 1, 0.18)
-    attachButtonFx(button, {
-        normal = normalColor,
-        hover = hoverColor,
-        active = activeColor,
-    }, 0.992)
-end
-
-local function createEmptyState(listFrame, title, subtitle)
-    local holder = Instance.new("Frame")
-    holder.Name = "EmptyState"
-    holder.Size = UDim2.new(1, -8, 0, 84)
-    holder.BackgroundColor3 = THEME.panelSoft
-    holder.BorderSizePixel = 0
-    holder.Parent = listFrame
-    applyCorner(holder, 14)
-    applyStroke(holder, THEME.strokeSoft, 1, 0.18)
-    applyVerticalGradient(holder, Color3.fromRGB(31, 38, 57), Color3.fromRGB(21, 27, 40))
-
-    local titleLabel = Instance.new("TextLabel")
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.Position = UDim2.new(0, 12, 0, 16)
-    titleLabel.Size = UDim2.new(1, -24, 0, 20)
-    titleLabel.Text = title
-    titleLabel.TextColor3 = THEME.text
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    titleLabel.Font = Enum.Font.GothamSemibold
-    titleLabel.TextSize = 14
-    titleLabel.Parent = holder
-
-    local subLabel = Instance.new("TextLabel")
-    subLabel.BackgroundTransparency = 1
-    subLabel.Position = UDim2.new(0, 12, 0, 38)
-    subLabel.Size = UDim2.new(1, -24, 0, 30)
-    subLabel.Text = subtitle
-    subLabel.TextWrapped = true
-    subLabel.TextColor3 = THEME.textDim
-    subLabel.TextXAlignment = Enum.TextXAlignment.Left
-    subLabel.TextYAlignment = Enum.TextYAlignment.Top
-    subLabel.Font = Enum.Font.Gotham
-    subLabel.TextSize = 12
-    subLabel.Parent = holder
-end
-
-local function setSelectedGameButton(targetButton)
-    selectedGameButton = targetButton
-    for _, child in ipairs(gameList:GetChildren()) do
-        if child:IsA("TextButton") then
-            local isSelected = child == targetButton
-            local color = isSelected and THEME.cardActive or THEME.card
-            local stroke = child:FindFirstChildOfClass("UIStroke")
-            TweenService:Create(child, TweenInfo.new(0.16, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                BackgroundColor3 = color
-            }):Play()
-            if stroke then
-                TweenService:Create(stroke, TweenInfo.new(0.16, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                    Color = isSelected and THEME.accent or THEME.strokeSoft,
-                    Transparency = isSelected and 0.02 or 0.18
-                }):Play()
-            end
-        end
-    end
-end
 
 local function createScriptButtonsForPage(page, query)
     clearChildren(scriptList)
+    emptyStateLabel.Parent = scriptList
     if not page then
         currentScriptsView = {}
-        createEmptyState(scriptList, "No game selected", "Choose a game on the left to see its available scripts.")
+        emptyStateLabel.Text = "Select a game to view scripts"
+        emptyStateLabel.Visible = true
         return
     end
 
@@ -12509,29 +12212,33 @@ local function createScriptButtonsForPage(page, query)
     currentScriptsView = filtered
 
     if #filtered == 0 then
-        createEmptyState(scriptList, "No scripts found", "Try another search term or select a different game.")
+        emptyStateLabel.Text = "No scripts found for this search"
+        emptyStateLabel.Visible = true
         return
     end
+
+    emptyStateLabel.Visible = false
 
     for _, scr in ipairs(filtered) do
         local sbtn = Instance.new("TextButton")
         sbtn.Name = "ScriptButton"
-        sbtn.Size = UDim2.new(1, -8, 0, 42)
-        sbtn.Text = "   " .. (scr.title or "Untitled")
+        sbtn.Size = UDim2.new(1, 0, 0, 34)
+        sbtn.BackgroundColor3 = THEME.Surface3
+        sbtn.BorderSizePixel = 0
+        sbtn.TextXAlignment = Enum.TextXAlignment.Left
+        sbtn.AutoButtonColor = false
+
+        local keyLabel = scr.has_key and "[KEY] " or "[NO KEY] "
+        sbtn.Text = "  " .. keyLabel .. (scr.title or "Untitled")
+
+        sbtn.TextColor3 = THEME.Text
+        sbtn.Font = Enum.Font.GothamMedium
+        sbtn.TextSize = 14
         sbtn.Parent = scriptList
-        styleListButton(sbtn, THEME.card, THEME.cardHover, THEME.cardActive)
 
-        local accentBar = Instance.new("Frame")
-        accentBar.Name = "AccentBar"
-        accentBar.Size = UDim2.new(0, 4, 1, -12)
-        accentBar.Position = UDim2.new(0, 8, 0, 6)
-        accentBar.BackgroundColor3 = scr.has_key and THEME.accentSoft or THEME.success
-        accentBar.BorderSizePixel = 0
-        accentBar.Parent = sbtn
-        applyCorner(accentBar, 999)
-
-        local tagText = scr.has_key and "KEY" or "READY"
-        createBadge(sbtn, tagText, scr.has_key)
+        addCorner(sbtn, 10)
+        addStroke(sbtn, scr.has_key and THEME.Warning or THEME.Success, 1, 0.55)
+        addHover(sbtn, THEME.Surface3, Color3.fromRGB(40, 48, 64), Color3.fromRGB(52, 62, 82))
 
         sbtn.MouseButton1Click:Connect(function()
             runScript(scr)
@@ -12542,45 +12249,61 @@ end
 local function createGameButton(page)
     local btn = Instance.new("TextButton")
     btn.Name = "GameButton"
-    btn.Size = UDim2.new(1, -8, 0, 40)
-    btn.Text = "   " .. normalizeGameTitle(page)
+    btn.Size = UDim2.new(1, 0, 0, 34)
+    btn.BackgroundColor3 = THEME.Surface3
+    btn.BorderSizePixel = 0
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    btn.Text = "  " .. normalizeGameTitle(page)
+    btn.TextColor3 = THEME.Text
+    btn.Font = Enum.Font.GothamMedium
+    btn.TextSize = 14
+    btn.AutoButtonColor = false
     btn.Parent = gameList
-    styleListButton(btn, THEME.card, THEME.cardHover, THEME.cardActive)
 
-    local accentDot = Instance.new("Frame")
-    accentDot.Name = "AccentDot"
-    accentDot.Size = UDim2.new(0, 8, 0, 8)
-    accentDot.Position = UDim2.new(0, 12, 0.5, -4)
-    accentDot.BackgroundColor3 = THEME.accent
-    accentDot.BorderSizePixel = 0
-    accentDot.Parent = btn
-    applyCorner(accentDot, 999)
+    local stroke = addStroke(btn, THEME.Stroke, 1, 0.45)
+    addCorner(btn, 10)
+    addHover(btn, THEME.Surface3, Color3.fromRGB(40, 48, 64), Color3.fromRGB(52, 62, 82))
 
     btn.MouseButton1Click:Connect(function()
         currentPage = page
         scriptSearchBox.Text = ""
-        setSelectedGameButton(btn)
+        for _, child in ipairs(gameList:GetChildren()) do
+            if child:IsA("TextButton") then
+                child.BackgroundColor3 = THEME.Surface3
+                local childStroke = child:FindFirstChildOfClass("UIStroke")
+                if childStroke then
+                    childStroke.Color = THEME.Stroke
+                    childStroke.Transparency = 0.45
+                end
+            end
+        end
+        btn.BackgroundColor3 = THEME.AccentDark
+        stroke.Color = THEME.Accent
+        stroke.Transparency = 0.1
         createScriptButtonsForPage(currentPage, "")
     end)
-
-    return btn
 end
 
 local function renderGames(query)
     currentPagesView = filterPages(allPages, query)
     clearChildren(gameList)
 
-    if #currentPagesView == 0 then
-        selectedGameButton = nil
-        createEmptyState(gameList, "No games found", "Nothing matched your search. Try a shorter or broader query.")
-        return
+    local hasCurrentPage = false
+    for _, page in ipairs(currentPagesView) do
+        if page == currentPage then
+            hasCurrentPage = true
+        end
+        createGameButton(page)
     end
 
-    for _, page in ipairs(currentPagesView) do
-        local button = createGameButton(page)
-        if currentPage == page then
-            setSelectedGameButton(button)
-        end
+    if currentPage and hasCurrentPage then
+        createScriptButtonsForPage(currentPage, scriptSearchBox.Text or "")
+    else
+        currentPage = nil
+        clearChildren(scriptList)
+        emptyStateLabel.Parent = scriptList
+        emptyStateLabel.Text = "Select a game to view scripts"
+        emptyStateLabel.Visible = true
     end
 end
 
@@ -12588,19 +12311,16 @@ end
 -- SEARCH HANDLERS
 ---------------------------------------------------------------------
 
-gameSearchBox:GetPropertyChangedSignal("Text"):Connect(function()
-    local q = gameSearchBox.Text or ""
-    currentPage = nil
-    selectedGameButton = nil
-    renderGames(q)
-    clearChildren(scriptList)
-    createEmptyState(scriptList, "Select a game", "Pick a game from the left panel to browse its scripts.")
-end)
+local function refreshGameSearch()
+    renderGames(gameSearchBox.Text or "")
+end
 
-scriptSearchBox:GetPropertyChangedSignal("Text"):Connect(function()
-    local q = scriptSearchBox.Text or ""
-    createScriptButtonsForPage(currentPage, q)
-end)
+local function refreshScriptSearch()
+    createScriptButtonsForPage(currentPage, scriptSearchBox.Text or "")
+end
+
+gameSearchBox:GetPropertyChangedSignal("Text"):Connect(refreshGameSearch)
+scriptSearchBox:GetPropertyChangedSignal("Text"):Connect(refreshScriptSearch)
 
 ---------------------------------------------------------------------
 -- TOGGLE SHOW / HIDE ANIMATION
@@ -12650,8 +12370,18 @@ end)
 renderGames("")
 if #allPages > 0 then
     currentPage = allPages[1]
-    renderGames("")
     createScriptButtonsForPage(currentPage, "")
+    for _, child in ipairs(gameList:GetChildren()) do
+        if child:IsA("TextButton") and child.Text == "  " .. normalizeGameTitle(currentPage) then
+            child.BackgroundColor3 = THEME.AccentDark
+            local childStroke = child:FindFirstChildOfClass("UIStroke")
+            if childStroke then
+                childStroke.Color = THEME.Accent
+                childStroke.Transparency = 0.1
+            end
+            break
+        end
+    end
 end
 
 print("[ROBScript Hub] Loaded with", #allPages, "pages from hub.json")
