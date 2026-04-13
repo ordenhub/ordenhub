@@ -11847,7 +11847,7 @@ local colors = {
     warning = Color3.fromRGB(255, 100, 80),
 }
 
--- Toggle button (static, no floating animation)
+-- Toggle button
 local toggleButton = Instance.new("TextButton")
 toggleButton.Name = "ToggleHubButton"
 toggleButton.Size = UDim2.new(0, 160, 0, 42)
@@ -11872,15 +11872,7 @@ toggleStroke.Thickness = 1.5
 toggleStroke.Transparency = 0.5
 toggleStroke.Parent = toggleButton
 
--- Hover animation for toggle button (glow effect)
-local toggleGlow = Instance.new("UIGradient")
-toggleGlow.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, colors.accent),
-    ColorSequenceKeypoint.new(1, colors.accentGlow)
-})
-toggleGlow.Visible = false
-toggleGlow.Parent = toggleStroke
-
+-- Hover animation for toggle button
 toggleButton.MouseEnter:Connect(function()
     TweenService:Create(toggleButton, TweenInfo.new(0.2), {
         BackgroundTransparency = 0,
@@ -11903,7 +11895,7 @@ toggleButton.MouseLeave:Connect(function()
     }):Play()
 end)
 
--- Main window with glassmorphism effect
+-- Main window
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
 mainFrame.Size = UDim2.new(0, 750, 0, 480)
@@ -11944,7 +11936,7 @@ titleCorner.Parent = titleBar
 local titleText = Instance.new("TextLabel")
 titleText.Size = UDim2.new(1, 0, 1, 0)
 titleText.BackgroundTransparency = 1
-titleText.Text = "⚡ ROBScript Hub  |  Premium Script Loader - Made by robscript.com"
+titleText.Text = "⚡ ROBScript Hub  |  Premium Script Loader"
 titleText.TextColor3 = colors.textPrimary
 titleText.Font = Enum.Font.GothamBold
 titleText.TextSize = 16
