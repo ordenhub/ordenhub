@@ -1,3 +1,33 @@
+-- ROBScript Hub protection guard
+-- The main hub must be launched through ROBScript Key System.
+
+do
+    local authEnv = (getgenv and getgenv()) or _G
+    local auth = authEnv.ROBScriptHubAuth
+
+    if type(auth) ~= "table"
+        or auth.passed ~= true
+        or type(auth.token) ~= "string"
+        or auth.token == ""
+    then
+        warn("[ROBScript Hub] Access denied. Open the hub through the key system.")
+        return
+    end
+
+    if type(auth.expires) ~= "number" or os.time() > auth.expires then
+        authEnv.ROBScriptHubAuth = nil
+        warn("[ROBScript Hub] Access denied. Key session expired.")
+        return
+    end
+
+    if auth.used == true then
+        warn("[ROBScript Hub] Access denied. This key session was already used.")
+        return
+    end
+
+    auth.used = true
+end
+
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
