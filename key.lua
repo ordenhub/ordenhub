@@ -9,6 +9,7 @@ local REQUIRED_KEY = "2026"
 ---------------------------------------------------------------------
 
 local Players          = game:GetService("Players")
+local HttpService      = game:GetService("HttpService")
 local TweenService     = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
@@ -539,6 +540,31 @@ local function showError(msg)
     end)
 end
 
+local function authorizeMainHub()
+    local authEnv = (getgenv and getgenv()) or _G
+    local token
+
+    local okGuid, guid = pcall(function()
+        return HttpService:GenerateGUID(false)
+    end)
+
+    if okGuid and type(guid) == "string" and guid ~= "" then
+        token = guid
+    else
+        token = "ROBScript-" .. tostring(os.time()) .. "-" .. tostring(math.random(100000, 999999))
+    end
+
+    authEnv.ROBScriptHubAuth = {
+        passed = true,
+        token = token,
+        expires = os.time() + 120,
+        used = false,
+        source = "ROBScriptKeySystem",
+    }
+
+    return token
+end
+
 ---------------------------------------------------------------------
 -- MAIN HUB LOADING
 ---------------------------------------------------------------------
@@ -563,6 +589,8 @@ local function loadMainHub()
         warn("[ROBScript KeyLoader] loadstring main.lua error:", err)
         return
     end
+
+    authorizeMainHub()
 
     destroyWithFade()
 
