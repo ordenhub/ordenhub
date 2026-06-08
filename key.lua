@@ -380,7 +380,7 @@ infoLabel.TextYAlignment = Enum.TextYAlignment.Top
 infoLabel.Font = Enum.Font.Gotham
 infoLabel.TextSize = 13
 infoLabel.TextColor3 = Color3.fromRGB(210, 218, 235)
-infoLabel.Text = "A key is required to access ROBscript Hub. Copy the key page link, get your key, then enter it below."
+infoLabel.Text = "A key is required to access ROBscript Hub. Open the key link, get your key, then enter it below."
 infoLabel.Parent = infoPanel
 
 local linkButton = Instance.new("TextButton")
@@ -406,7 +406,7 @@ openHintButton.Name = "OpenHintButton"
 openHintButton.Size = UDim2.new(0.52, -4, 0, 36)
 openHintButton.Position = UDim2.new(0.48, 8, 0, 82)
 openHintButton.BackgroundColor3 = THEME.button
-openHintButton.Text = "robscript.com"
+openHintButton.Text = "Open key link"
 openHintButton.TextColor3 = THEME.accent
 openHintButton.Font = Enum.Font.GothamBold
 openHintButton.TextSize = 14
