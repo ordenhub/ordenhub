@@ -325,7 +325,7 @@ end
 -- LOAD HUB DATA (embedded, no HTTP)
 ---------------------------------------------------------------------
 
-local allpagesтут
+local allPages = {}
 
 if #allPages == 0 then
     warn("[ROBScript Hub] No pages embedded; UI will still show but be empty.")
